@@ -19,7 +19,6 @@ const Routing = () => {
     const user = JSON.parse(localStorage.getItem("user")); //JSON.parse() make this "user" object from string
     if (user) {
       dispatch({ type: "USER", payload: user });
-      navigate("/");
     } else {
       navigate("/signin");
     }
