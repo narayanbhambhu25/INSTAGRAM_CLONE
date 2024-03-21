@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import M from "materialize-css";
 
@@ -9,48 +9,53 @@ const CreatePost = () => {
   const [image, setImage] = useState("");
   const [url, setUrl] = useState(""); // will get image url in data
 
+  useEffect(() => {
+    if (url) {
+      fetch("/createpost", {
+        //for network req to node js server from react app
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+        body: JSON.stringify({
+          title,
+          body,
+          pic: url,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            M.toast({ html: data.error, classes: "#c62828 red daeken-3" });
+            return;
+          } else {
+            M.toast({
+              html: "Created Post Successfully",
+              classes: "#43a047 green daeken-1",
+            });
+            navigate("/"); // after succesfully signedIn user will be on login screen
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [url]); // thiis useFfect will change when url is change so when network req with cloudniry finifh then url will change and then useffect also kick
+
   const postDetails = () => {
     const data = new FormData();
     data.append("file", image); // use for save image to cloudnary
     data.append("upload_preset", "Insta-Clone");
     data.append("cloud_name", "diconntkh");
     fetch("https://api.cloudinary.com/v1_1/diconntkh/image/upload", {
-      // use save image in cloudinary
+      // makin req to cloudinary
       method: "post",
       body: data,
     })
       .then((res) => res.json())
       .then((data) => {
-        setUrl(data.url);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    fetch("/createpost", {
-      //for network req to node js server from react app
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        body,
-        pic: url,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          M.toast({ html: data.error, classes: "#c62828 red daeken-3" });
-          return;
-        } else {
-          M.toast({
-            html: "Created Post Successfully",
-            classes: "#43a047 green daeken-1",
-          });
-          navigate("/"); // after succesfully signedIn user will be on login screen
-        }
+        setUrl(data.url); // here our url state will change and then useeefect will be kicking
       })
       .catch((err) => {
         console.log(err);

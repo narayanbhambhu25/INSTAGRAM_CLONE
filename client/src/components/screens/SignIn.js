@@ -38,6 +38,8 @@ const SignIn = () => {
           });
           return;
         } else {
+          localStorage.setItem("jwt", data.token); // saven token to localstorage
+          localStorage.setItem("user", JSON.stringify(data.user));
           M.toast({
             html: "SignedIn Success",
             classes: "#43a047 green daeken-1",
