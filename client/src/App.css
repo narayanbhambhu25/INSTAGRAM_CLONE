@@ -30,3 +30,15 @@ a{
 .item{
     width: 30%;
 }
+ 
+.home-card{
+    margin: 26px auto;
+    max-width: 500px;
+    height: max-content;
+}
+
+#toast-container{
+    top: 30px !important;
+    right: 20px !important;
+    left: auto !important;
+}
