@@ -7,7 +7,7 @@ const Post = mongoose.model("Post");
 router.get("/allpost", requireLogin, (req, res) => {
   Post.find()
     .populate("postedBy", "_id name") // to get all detail(i.e. id and name) of user who posted
-
+    .populate("comments.postedBy", "_id name")
     .then((posts) => {
       res.json({ posts });
     })
@@ -78,6 +78,30 @@ router.put("/unlike", requireLogin, (req, res) => {
       new: true, // for new updated record
     }
   )
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => {
+      return res.status(422).json({ error: err });
+    });
+});
+
+router.put("/comment", requireLogin, (req, res) => {
+  const comment = {
+    text: req.body.text,
+    postedBy: req.user._id,
+  };
+  Post.findByIdAndUpdate(
+    req.body.postId,
+    {
+      $push: { comments: comment }, // pushing loggedin user to our likes array
+    },
+    {
+      new: true, // for new updated record
+    }
+  )
+    .populate("comments.postedBy", "_id name")
+    .populate("postedBy", "_id name")
     .then((result) => {
       res.json(result);
     })
