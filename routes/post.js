@@ -110,4 +110,47 @@ router.put("/comment", requireLogin, (req, res) => {
     });
 });
 
+// router.delete("/deletepost/:postId", requireLogin, (req, res) => {
+//   Post.findOne({ _id: req.params.postId })
+//     .populate("postedBy", "_id")
+//     .then((post) => {
+//       if (post.postedBy._id.toString() === req.user._id.toString()) {
+//         post
+//           .delete()
+//           .then((result) => {
+//             res.json(result);
+//           })
+//           .catch((err) => {
+//             console.log(err);
+//           });
+//       }
+//     })
+//     .catch((err) => {
+//       return res.status(422).json({ error: err });
+//     });
+// });
+
+router.delete("/deletepost/:postId", requireLogin, async (req, res) => {
+  try {
+    const post = await Post.findOne({ _id: req.params.postId }).populate(
+      "postedBy",
+      "_id"
+    );
+
+    if (!post) {
+      return res.status(422).json({ error: "Post not found" });
+    }
+
+    if (post.postedBy._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Unauthorized access" });
+    }
+
+    const result = await post.deleteOne();
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;
