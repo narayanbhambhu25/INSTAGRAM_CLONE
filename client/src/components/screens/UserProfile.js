@@ -1,0 +1,81 @@
+import React, { useEffect, useState, useContext } from "react";
+import { UserContext } from "../../App";
+import { useParams } from "react-router-dom";
+
+const Profile = () => {
+  const [userProfile, setProfile] = useState(null);
+  const { state, dispatch } = useContext(UserContext);
+  const { userid } = useParams();
+
+  useEffect(() => {
+    fetch(`/user/${userid}`, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        setProfile(result);
+      });
+  }, []);
+
+  return (
+    <>
+      {userProfile ? (
+        <div style={{ maxWidth: "550px", margin: "0px auto" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              margin: "18px 0px",
+              borderBottom: "1px solid grey",
+            }}
+          >
+            <div>
+              <img
+                style={{
+                  width: "160px",
+                  height: "160px",
+                  borderRadius: "80px",
+                }}
+                src="https://images.unsplash.com/photo-1504438878808-ee48579f0f5f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8NHw2MTk2Mjl8fGVufDB8fHx8fA%3D%3D"
+              />
+            </div>
+            <div>
+              <h5>{userProfile.user.name}</h5>
+              <h5>{userProfile.user.email}</h5>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "108%",
+                }}
+              >
+                <h6>{userProfile.posts.length} posts</h6>
+                <h6>40 followers</h6>
+                <h6>40 following</h6>
+              </div>
+            </div>
+          </div>
+          <div className="gallery">
+            {userProfile.posts.map((item) => {
+              return (
+                <img
+                  key={item._id}
+                  className="item"
+                  src={item.photo}
+                  alt={item.title}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <h2>loading...!</h2>
+      )}
+    </>
+  );
+};
+
+export default Profile;
