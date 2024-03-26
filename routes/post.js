@@ -6,7 +6,7 @@ const Post = mongoose.model("Post");
 
 router.get("/allpost", requireLogin, (req, res) => {
   Post.find()
-    .populate("postedBy", "_id name") // to get all detail(i.e. id and name) of user who posted
+    .populate("postedBy", "_id name pic") // to get all detail(i.e. id and name) of user who posted
     .populate("comments.postedBy", "_id name")
     .then((posts) => {
       res.json({ posts });
