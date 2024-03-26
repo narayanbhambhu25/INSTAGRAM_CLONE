@@ -21,4 +21,52 @@ router.get("/user/:id", requireLogin, async (req, res) => {
   }
 });
 
+router.put("/follow", requireLogin, async (req, res) => {
+  try {
+    // Update the user being followed
+    const followedUser = await User.findByIdAndUpdate(
+      req.body.followId,
+      { $push: { followers: req.user._id } },
+      { new: true }
+    );
+
+    // Update the current user
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $push: { following: req.body.followId } },
+      { new: true }
+    ).select("-password");
+
+    // Send the updated user object as response
+    res.json(updatedUser);
+  } catch (err) {
+    // Handle errors
+    res.status(422).json({ error: err.message });
+  }
+});
+
+router.put("/unfollow", requireLogin, async (req, res) => {
+  try {
+    // Update the user being unfollowed
+    const unfollowedUser = await User.findByIdAndUpdate(
+      req.body.unfollowId,
+      { $pull: { followers: req.user._id } },
+      { new: true }
+    );
+
+    // Update the current user
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { following: req.body.unfollowId } },
+      { new: true }
+    ).select("-password");
+
+    // Send the updated user object as response
+    res.json(updatedUser);
+  } catch (err) {
+    // Handle errors
+    res.status(422).json({ error: err.message });
+  }
+});
+
 module.exports = router;
