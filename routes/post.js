@@ -73,6 +73,7 @@ router.put("/like", requireLogin, (req, res) => {
       new: true, // for new updated record
     }
   )
+    .populate("postedBy", "_id name pic")
     .then((result) => {
       res.json(result);
     })
@@ -91,6 +92,7 @@ router.put("/unlike", requireLogin, (req, res) => {
       new: true, // for new updated record
     }
   )
+    .populate("postedBy", "_id name pic")
     .then((result) => {
       res.json(result);
     })
@@ -114,7 +116,7 @@ router.put("/comment", requireLogin, (req, res) => {
     }
   )
     .populate("comments.postedBy", "_id name")
-    .populate("postedBy", "_id name")
+    .populate("postedBy", "_id name pic")
     .then((result) => {
       res.json(result);
     })
