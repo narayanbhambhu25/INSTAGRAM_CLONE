@@ -15,5 +15,11 @@ export const reducer = (state, action) => {
       following: action.payload.following, // we have apdated the state
     };
   }
+  if (action.type === "UPDATEPIC") {
+    return {
+      ...state, // spreading previous state
+      pic: action.payload, //overirdeing pic or state updating
+    };
+  }
   return state;
 };
