@@ -16,6 +16,19 @@ router.get("/allpost", requireLogin, (req, res) => {
     });
 });
 
+router.get("/getsubpost", requireLogin, (req, res) => {
+  // if postedBy is in following
+  Post.find({ postedBy: { $in: req.user.following } }) // to get the post on home screen only of the following users
+    .populate("postedBy", "_id name") // to get all detail(i.e. id and name) of user who posted
+    .populate("comments.postedBy", "_id name")
+    .then((posts) => {
+      res.json({ posts });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 router.post("/createpost", requireLogin, (req, res) => {
   const { title, body, pic } = req.body;
   if (!title || !body || !pic) {
@@ -109,26 +122,6 @@ router.put("/comment", requireLogin, (req, res) => {
       return res.status(422).json({ error: err });
     });
 });
-
-// router.delete("/deletepost/:postId", requireLogin, (req, res) => {
-//   Post.findOne({ _id: req.params.postId })
-//     .populate("postedBy", "_id")
-//     .then((post) => {
-//       if (post.postedBy._id.toString() === req.user._id.toString()) {
-//         post
-//           .delete()
-//           .then((result) => {
-//             res.json(result);
-//           })
-//           .catch((err) => {
-//             console.log(err);
-//           });
-//       }
-//     })
-//     .catch((err) => {
-//       return res.status(422).json({ error: err });
-//     });
-// });
 
 router.delete("/deletepost/:postId", requireLogin, async (req, res) => {
   try {
