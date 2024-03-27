@@ -19,7 +19,7 @@ router.get("/allpost", requireLogin, (req, res) => {
 router.get("/getsubpost", requireLogin, (req, res) => {
   // if postedBy is in following
   Post.find({ postedBy: { $in: req.user.following } }) // to get the post on home screen only of the following users
-    .populate("postedBy", "_id name") // to get all detail(i.e. id and name) of user who posted
+    .populate("postedBy", "_id name pic") // to get all detail(i.e. id and name) of user who posted
     .populate("comments.postedBy", "_id name")
     .then((posts) => {
       res.json({ posts });

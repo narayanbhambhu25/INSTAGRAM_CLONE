@@ -131,6 +131,15 @@ const Home = () => {
             <div className="card home-card" key={item._id}>
               <h5 style={{ padding: "5px" }}>
                 {" "}
+                <img
+                  style={{
+                    width: "40px",
+                    borderRadius: "100%",
+                    border: "2px solid black",
+                  }}
+                  src={item.postedBy.pic}
+                  alt=""
+                />
                 <Link
                   to={
                     item.postedBy._id !== state._id
