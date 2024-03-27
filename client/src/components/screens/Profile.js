@@ -5,7 +5,6 @@ const Profile = () => {
   const [mypics, setPics] = useState([]);
   const { state, dispatch } = useContext(UserContext);
   const [image, setImage] = useState("");
-  const [url, setUrl] = useState("");
 
   useEffect(() => {
     fetch("/mypost", {
@@ -32,13 +31,25 @@ const Profile = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          setUrl(data.url); // here our url state will change and then useeefect will be kicking
-          console.log(data);
-          localStorage.setItem(
-            "user",
-            JSON.stringify({ ...state, pic: data.url })
-          ); // we are overriding default pic updated one
-          dispatch({ type: "UPDATEPIC", payload: data.url });
+          fetch("/updatepic", {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("jwt"),
+            },
+            body: JSON.stringify({
+              pic: data.url,
+            }),
+          })
+            .then((res) => res.json())
+            .then((result) => {
+              console.log(result);
+              localStorage.setItem(
+                "user",
+                JSON.stringify({ ...state, pic: result.pic })
+              ); // we are overriding default pic updated one
+              dispatch({ type: "UPDATEPIC", payload: result.pic });
+            });
         })
         .catch((err) => {
           console.log(err);

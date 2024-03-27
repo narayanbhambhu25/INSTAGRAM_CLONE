@@ -69,4 +69,23 @@ router.put("/unfollow", requireLogin, async (req, res) => {
   }
 });
 
+// for saving updated profile pic to database
+router.put("/updatepic", requireLogin, async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { pic: req.body.pic } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;
