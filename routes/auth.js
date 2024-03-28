@@ -8,6 +8,43 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config/keys");
 const requireLogin = require("../middleware/requireLogin");
 
+// const nodemailer = require("nodemailer");
+// const tls = require("tls");
+
+// // Create a transporter object using the default SMTP transport
+// let transporter = nodemailer.createTransport({
+//   host: "smtp-relay.brevo.com",
+//   port: 587,
+//   secure: false, // true for 465, false for other ports
+//   auth: {
+//     user: "narayan210346@gmail.com", // your email
+//     pass: "gfxPc*23qb82*jK", // your password
+//   },
+//   // Accept self-signed certificates
+//   tls: {
+//     rejectUnauthorized: false,
+//   },
+// });
+
+// // Function to send email
+// function sendEmail(email, subject, message) {
+//   // Setup email data
+//   let mailOptions = {
+//     from: "narayan210346@gmail.com", // sender address
+//     to: email, // list of receivers
+//     subject: subject, // Subject line
+//     text: message, // plain text body
+//   };
+
+//   // Send email
+//   transporter.sendMail(mailOptions, (error, info) => {
+//     if (error) {
+//       return console.log("Error occurred while sending email:", error);
+//     }
+//     console.log("Email sent: %s", info.messageId);
+//   });
+// }
+
 router.post("/signup", (req, res) => {
   const { name, email, password, pic } = req.body;
   if (!email || !password || !name) {
@@ -32,6 +69,16 @@ router.post("/signup", (req, res) => {
         user
           .save()
           .then((user) => {
+            // // Usage example
+            // // Replace these values with actual user details
+            // const userEmail = "user.email";
+            // const userSubject = "Welcome to our platform!";
+            // const userMessage =
+            //   "Thank you for signing up. We hope you enjoy our platform.";
+
+            // // Call the function to send the email
+            // sendEmail(userEmail, userSubject, userMessage);
+
             res.json({ message: "SignedUp successfully" });
           })
           .catch((err) => {

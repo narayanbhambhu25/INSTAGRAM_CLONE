@@ -88,4 +88,16 @@ router.put("/updatepic", requireLogin, async (req, res) => {
   }
 });
 
+router.post("/search-users", (req, res) => {
+  let userPattern = new RegExp("^" + req.body.query); // will give record that email start with ram EX ^ram
+  User.find({ email: { $regex: userPattern } })
+    .select("_id email") // after search it will giv us only email and id of searched user
+    .then((user) => {
+      res.json({ user });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 module.exports = router;

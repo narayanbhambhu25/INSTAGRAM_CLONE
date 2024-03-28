@@ -8,6 +8,7 @@ router.get("/allpost", requireLogin, (req, res) => {
   Post.find()
     .populate("postedBy", "_id name pic") // to get all detail(i.e. id and name) of user who posted
     .populate("comments.postedBy", "_id name")
+    .sort("-createdAt") // for latets post should be on top
     .then((posts) => {
       res.json({ posts });
     })
@@ -21,6 +22,7 @@ router.get("/getsubpost", requireLogin, (req, res) => {
   Post.find({ postedBy: { $in: req.user.following } }) // to get the post on home screen only of the following users
     .populate("postedBy", "_id name pic") // to get all detail(i.e. id and name) of user who posted
     .populate("comments.postedBy", "_id name")
+    .sort("-createdAt")
     .then((posts) => {
       res.json({ posts });
     })
